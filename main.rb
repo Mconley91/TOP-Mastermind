@@ -18,6 +18,16 @@ class Game
   def increment_turn
     self.turn += 1
   end
+
+  def code_picker
+    code_options = %w[A B C D]
+    code = []
+    while code.length < 4
+      cpu_choice = code_options[rand(4)]
+      code << cpu_choice unless code.any? { |ele| ele == cpu_choice }
+    end
+    code
+  end
 end
 
 current_game = Game.new([%w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _],
@@ -25,8 +35,10 @@ current_game = Game.new([%w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _],
                          %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _]])
 
 def playing(current_game)
+  code = current_game.code_picker
   current_game.draw_board
   while current_game.turn <= 12
+    puts "Testing code picker code: #{code}"
     puts "Current Turn: #{current_game.turn}"
     puts "input 'A B C D' in the correct order to break the code!"
     input = gets.chomp
