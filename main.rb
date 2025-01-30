@@ -31,15 +31,23 @@ class Game
     code
   end
 
-  def check_for_winner(input, code)
-    input.split(' ') == code
+  def check_for_winner(input)
+    if input.split(' ') == code
+      puts 'You Won: You cracked the code!'
+      true
+    else
+      increment_turn
+      false
+    end
   end
 
   def update_board(input, turn)
     arr[turn - 1] = input.split(' ') << "#{correct_entires} correct entries"
+    feedback(input)
+    draw_board
   end
 
-  def feedback(input, code)
+  def feedback(input)
     self.correct_entires = 0
     input.split(' ').each_with_index { |entry, index| entry == code[index] ? self.correct_entires += 1 : '' }
   end
@@ -53,15 +61,8 @@ class Game
       puts "Current Turn: #{turn}"
       input = gets.chomp
       if validate_input(input)
-        feedback(input, code)
         update_board(input, turn)
-        draw_board
-        if check_for_winner(input, code)
-          puts 'You Won: You cracked the code!'
-          return
-        else
-          increment_turn
-        end
+        return if check_for_winner(input)
       else
         puts 'Invalid Entry!'
       end
