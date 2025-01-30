@@ -14,31 +14,24 @@ class Game
     @code = []
   end
 
-  def draw_board
-    12.times { |i| puts "#{i + 1} #{arr[i]}" }
-  end
-
-  def increment_turn
-    self.turn += 1
-  end
-
   def code_picker
     code_options = %w[A B C D]
     while code.length < 4
       cpu_choice = code_options[rand(4)]
       code << cpu_choice unless code.any? { |ele| ele == cpu_choice }
     end
-    code
   end
 
-  def check_for_winner(input)
-    if input.split(' ') == code
-      puts 'You Won: You cracked the code!'
-      true
-    else
-      increment_turn
-      false
-    end
+  def draw_board
+    12.times { |i| puts "#{i + 1 > 9 ? "#{i + 1}: " : "#{i + 1}:  "}#{arr[i]}" }
+  end
+
+  def validate_input(input)
+    input.split(' ').all? { |entry| code.include?(entry) }
+  end
+
+  def increment_turn
+    self.turn += 1
   end
 
   def update_board(input, turn)
@@ -52,10 +45,6 @@ class Game
     input.split(' ').each_with_index { |entry, index| entry == code[index] ? self.correct_entires += 1 : '' }
   end
 
-  def validate_input(input)
-    input.split(' ').all? { |entry| code.include?(entry) }
-  end
-
   def handle_turn
     while turn <= 12
       puts "Current Turn: #{turn}"
@@ -67,7 +56,17 @@ class Game
         puts 'Invalid Entry!'
       end
     end
-    puts 'Game Over: Turn limit reached!'
+    puts "Game Over: Turn limit reached! The code was #{code}"
+  end
+
+  def check_for_winner(input)
+    if input.split(' ') == code
+      puts 'You Won: You cracked the code!'
+      true
+    else
+      increment_turn
+      false
+    end
   end
 end
 
