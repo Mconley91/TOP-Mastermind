@@ -35,18 +35,15 @@ class Game
   end
 
   def update_board(input, turn)
-    arr[turn - 1] = input.split(' ') << "#{correct_entires} correct entries"
-    feedback(input)
-    draw_board
-  end
-
-  def feedback(input)
     self.correct_entires = 0
     input.split(' ').each_with_index { |entry, index| entry == code[index] ? self.correct_entires += 1 : '' }
+    arr[turn - 1] = input.split(' ') << "#{correct_entires} correct entries"
+    draw_board
   end
 
   def handle_turn
     while turn <= 12
+      puts "CHEAT: The code is #{code}"
       puts "Current Turn: #{turn}"
       input = gets.chomp
       if validate_input(input)
