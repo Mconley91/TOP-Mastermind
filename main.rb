@@ -67,15 +67,36 @@ class Game
   end
 end
 
-current_game = Game.new([%w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _],
-                         %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _],
-                         %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _]])
-
 def start_game(current_game)
+  playing = false
+  until playing
+    puts "Enter 'Codebreaker' to crack a code or 'Mastermind' to make a code the computer will try to crack."
+    input = gets.chomp
+    if input == 'Codebreaker'
+      playing = true
+      codebreaker_game(current_game)
+    elsif input == 'Mastermind'
+      playing = true
+      mastermind_game(current_game)
+    else
+      puts 'Invalid entry! Try again.'
+    end
+  end
+end
+
+def codebreaker_game(current_game)
   current_game.code_picker
   current_game.draw_board
   puts "input 'A B C D' in the correct order to crack the code! You have 12 Turns."
   current_game.handle_turn
 end
+
+def mastermind_game(current_game)
+  # code goes here
+end
+
+current_game = Game.new([%w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _],
+                         %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _],
+                         %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _]])
 
 start_game(current_game)
