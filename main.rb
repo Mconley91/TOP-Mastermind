@@ -54,15 +54,20 @@ def playing(current_game)
   while current_game.turn <= 12
     puts "Current Turn: #{current_game.turn}"
     input = gets.chomp
-    current_game.feedback(input, code)
-    current_game.update_board(input, current_game.turn)
-    current_game.draw_board
-    if current_game.check_for_winner(input, code)
-      puts 'You won: You cracked the code!'
-      return
+    if input.split(' ').all? { |entry| code.include?(entry) }
+      current_game.feedback(input, code)
+      current_game.update_board(input, current_game.turn)
+      current_game.draw_board
+      if current_game.check_for_winner(input, code)
+        puts 'You Won: You cracked the code!'
+        return
+      else
+        current_game.increment_turn
+      end
     else
-      current_game.increment_turn
+      puts 'Invalid Input!'
     end
+
   end
   puts 'Game Over: Turn limit reached!'
 end
