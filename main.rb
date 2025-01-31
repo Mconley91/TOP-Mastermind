@@ -5,17 +5,18 @@
 # each round the amount of correctly placed pins should be displayed along with the amount of incorrect pins
 # 12 total rounds
 class Game
-  attr_accessor(:arr, :turn, :correct_entires, :code)
+  attr_accessor(:arr, :turn, :correct_entires, :code, :code_options, :user_input)
 
   def initialize(arr)
     @turn = 1
     @arr = arr
     @correct_entires = 0
     @code = []
+    @code_options = %w[A B C D]
+    @user_input = []
   end
 
   def code_picker
-    code_options = %w[A B C D]
     while code.length < 4
       cpu_choice = code_options[rand(4)]
       code << cpu_choice unless code.any? { |ele| ele == cpu_choice }
@@ -26,42 +27,58 @@ class Game
     12.times { |i| puts "#{i + 1 > 9 ? "#{i + 1}: " : "#{i + 1}:  "}#{arr[i]}" }
   end
 
-  def validate_input(input)
-    input.split(' ').all? { |entry| code.include?(entry) }
+  def validate_input
+    user_input.all? { |entry| code_options.include?(entry) }
   end
 
   def increment_turn
     self.turn += 1
   end
 
-  def update_board(input, turn)
+  def update_board
     self.correct_entires = 0
-    input.split(' ').each_with_index { |entry, index| entry == code[index] ? self.correct_entires += 1 : '' }
-    arr[turn - 1] = input.split(' ') << "#{correct_entires} correct entries"
+    user_input.each_with_index { |entry, index| entry == code[index] ? self.correct_entires += 1 : '' }
+    arr[turn - 1] = user_input + ["#{correct_entires} correct entries"]
     draw_board
   end
 
-  def handle_turn
+  def handle_codebreaker_game
     while turn <= 12
-      puts "CHEAT: The code is #{code}"
-      puts "Current Turn: #{turn}"
-      input = gets.chomp
-      if validate_input(input)
-        update_board(input, turn)
-        return if check_for_winner(input)
+      self.user_input = gets.chomp.split(' ')
+      if validate_input
+        update_board
+        return if check_for_winner
       else
         puts 'Invalid Entry!'
       end
     end
-    puts "Game Over: Turn limit reached! The code was #{code}"
+    puts "Game Over: Turn limit reached! Mastermind wins! The code was #{code}."
   end
 
-  def check_for_winner(input)
-    if input.split(' ') == code
-      puts 'You Won: You cracked the code!'
+  def handle_mastermind_game
+    self.code = gets.chomp.split(' ')
+    if validate_input
+      while turn <= 12
+        self.code = []
+        code_picker
+        update_board
+        return if check_for_winner
+      end
+      puts "Game Over: Turn limit reached! Mastermind wins! The code was #{code}."
+    else
+      puts 'Invalid Entry!'
+    end
+  end
+
+  def check_for_winner
+    if user_input == code
+      puts 'You Won: Codebreaker cracked the code!'
       true
     else
+      puts "#{user_input} #{code}"
+      puts "#{user_input == code}"
       increment_turn
+      puts "Current Turn: #{turn}"
       false
     end
   end
@@ -88,11 +105,13 @@ def codebreaker_game(current_game)
   current_game.code_picker
   current_game.draw_board
   puts "input 'A B C D' in the correct order to crack the code! You have 12 Turns."
-  current_game.handle_turn
+  current_game.handle_codebreaker_game
 end
 
 def mastermind_game(current_game)
-  # code goes here
+  current_game.draw_board
+  puts "input 'A B C D' in any order to make the code! The computer has 12 Turns to guess it."
+  current_game.handle_mastermind_game
 end
 
 current_game = Game.new([%w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _], %w[_ _ _ _],
